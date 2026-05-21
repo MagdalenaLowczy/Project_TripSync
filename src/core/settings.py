@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "src.core.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
 application = get_wsgi_application()
 # Quick-start development settings - unsuitable for production
