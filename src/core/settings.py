@@ -23,9 +23,11 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["my-django-env.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
+                 "localhost",
+                 "127.0.0.1","my-new-environment.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",]
 
 
 INSTALLED_APPS = [
@@ -93,11 +95,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "tripsync_db",
-        "USER": "tripsync_user",
-        "PASSWORD": "TajneHaslo456#@!",
-        "HOST": "db",  # localhost zeby lokalnie a db jesli dla konterera
-        "PORT": "5432",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"), #"HOST": "db",  # localhost zeby lokalnie a db jesli dla konterera
+        "PORT": env("DB_PORT"),
     }
 }
 

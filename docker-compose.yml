@@ -24,9 +24,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: TajneHaslo456#@!
-      POSTGRES_USER: tripsync_user
-      POSTGRES_DB: tripsync_db
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
