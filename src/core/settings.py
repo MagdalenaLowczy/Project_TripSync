@@ -4,7 +4,7 @@ import os
 import django.core.mail.utils
 
 env = environ.Env(DEBUG=(bool, False))
-
+from django.core.wsgi import get_wsgi_application
 
 os.environ["HOSTNAME"] = "localhost"
 
@@ -15,7 +15,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.core.settings')
 
+application = get_wsgi_application()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -25,9 +27,12 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = ["my-django-env.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
-                 "localhost",
-                 "127.0.0.1","my-new-environment.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",]
+ALLOWED_HOSTS = [
+    "my-django-env.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
+    "localhost",
+    "127.0.0.1",
+    "my-new-environment.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
+]
 
 
 INSTALLED_APPS = [
@@ -98,7 +103,9 @@ DATABASES = {
         "NAME": env("DB_NAME"),
         "USER": env("DB_USER"),
         "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"), #"HOST": "db",  # localhost zeby lokalnie a db jesli dla konterera
+        "HOST": env(
+            "DB_HOST"
+        ),  # "HOST": "db",  # localhost zeby lokalnie a db jesli dla konterera
         "PORT": env("DB_PORT"),
     }
 }
