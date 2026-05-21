@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.core.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "src.core.settings")
 
 application = get_wsgi_application()
 # Quick-start development settings - unsuitable for production
@@ -25,7 +25,7 @@ application = get_wsgi_application()
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = [
     "my-django-env.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
