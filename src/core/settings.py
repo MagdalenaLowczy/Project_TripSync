@@ -2,9 +2,9 @@ from pathlib import Path
 import environ
 import os
 import django.core.mail.utils
+from django.core.wsgi import get_wsgi_application
 
 env = environ.Env(DEBUG=(bool, False))
-from django.core.wsgi import get_wsgi_application
 
 os.environ["HOSTNAME"] = "localhost"
 
@@ -56,6 +56,7 @@ INSTALLED_EXTENSIONS = [
     "crispy_forms",
     "crispy_bootstrap4",
     "silk",
+    "storages",
 ]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
@@ -177,7 +178,6 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "noreply@tripsync.com"
 SERVER_EMAIL = "noreply@tripsync.com"
 
-import os
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get(
