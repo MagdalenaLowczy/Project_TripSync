@@ -2,7 +2,8 @@ from pathlib import Path
 import environ
 import os
 import django.core.mail.utils
-from django.core.wsgi import get_wsgi_application
+
+# from django.core.wsgi import get_wsgi_application
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -17,7 +18,7 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
-application = get_wsgi_application()
+# application = get_wsgi_application()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
