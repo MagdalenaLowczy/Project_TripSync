@@ -1,7 +1,9 @@
+from urllib.parse import urlencode
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.conf import settings
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, UpdateView, ListView, View
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,9 +19,13 @@ from django.utils.encoding import (
     force_bytes,
     force_str,
 )  # force_bytes() zamienia cokolwiek (tu: liczbę) na bytes. 42 → b'42'
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import (
+    urlsafe_base64_encode,
+    urlsafe_base64_decode,
+    url_has_allowed_host_and_scheme,
+)
 from django.contrib.sites.shortcuts import get_current_site
-from .tasks import send_invite_email
+from .tasks import send_invite_email, send_invite_email_async
 
 
 class RegistrationView(CreateView):
@@ -28,12 +34,24 @@ class RegistrationView(CreateView):
     template_name = "users/register.html"
     success_url = reverse_lazy("login")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["next"] = self.request.GET.get("next", "")
+        return context
+
     def _create_activation_link(self, user):
         token = default_token_generator.make_token(user)  # generowanie tokenu
         uid = urlsafe_base64_encode(force_bytes(user.pk))  # kodowanie ID usera do meila
 
         current_site = get_current_site(self.request)
         activation_link = f"http://{current_site.domain}/users/activate/{uid}/{token}/"
+
+        next_url = self.request.POST.get("next")
+        if next_url:
+            from urllib.parse import urlencode
+
+            activation_link += f"?{urlencode({'next': next_url})}"
+
         return activation_link
 
     def form_valid(self, form):
@@ -43,11 +61,13 @@ class RegistrationView(CreateView):
 
         activation_link = self._create_activation_link(user)
 
-        # import z tasks
-        send_invite_email.delay(
-            user.email,
-            activation_link=activation_link,
-        )
+        if settings.DEBUG:
+            send_invite_email(user.email, activation_link=activation_link)
+        else:
+            send_invite_email_async.delay(
+                user.email,
+                activation_link=activation_link,
+            )
 
         messages.info(self.request, "Check your email to activate your account.")
 
@@ -64,13 +84,23 @@ class ActivateView(View):
         except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
             user = None
 
+        next_url = request.GET.get("next")
+
         if user is not None and default_token_generator.check_token(
             user, token
         ):  # czy token jest ważny
             user.is_active = True
             user.save()
             messages.success(request, "Your account has been activated.")
-            return redirect("login")
+            login_url = reverse("login")
+
+            if next_url and url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+            ):
+                login_url += f"?{urlencode({'next': next_url})}"
+
+            return redirect(login_url)
         else:
             messages.error(request, "The confirmation link is invalid or has expired.")
             return redirect("register")

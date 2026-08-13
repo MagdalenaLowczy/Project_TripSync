@@ -1,31 +1,20 @@
 from pathlib import Path
 import environ
 import os
-import django.core.mail.utils
 
-# from django.core.wsgi import get_wsgi_application
 
 env = environ.Env(DEBUG=(bool, False))
 
 os.environ["HOSTNAME"] = "localhost"
 
-django.core.mail.utils.DNS_NAME._fqdn = "localhost"
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
-# application = get_wsgi_application()
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = [
@@ -34,7 +23,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "my-new-environment.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
 ]
-
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -168,7 +156,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "profile"
+LOGIN_REDIRECT_URL = "/users/profile/"
 LOGOUT_REDIRECT_URL = "home"
 
 

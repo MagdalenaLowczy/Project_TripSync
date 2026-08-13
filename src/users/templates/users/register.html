@@ -5,6 +5,7 @@
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Join-Register</legend>
                 {{ form|crispy }}
@@ -15,7 +16,7 @@
         </form>
         <div class="border-top pt-3">
             <small class="text-muted">
-                Already have an account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
+                Already have an account? <a class="ml-2" href="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Sign In</a>
             </small>
         </div>
     </div>

@@ -5,16 +5,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from ..models import Trip, TripInvite
 
 
-# niezalogowana osoba klika link
-# przekierowanie na logowanie (z ?next=)
-# po zalogowaniu wraca do zaproszenia
-# widzi szczegóły tripu
-# akceptuje/odrzuca
-# powiadomienie + log lecą przy decyzji
-
-# BRAKUJE opcji rejestracji => jak nie zgubic ?=next w procesie => zmiana w widokach usera =>nie wiem jak??
-
-
 class TripJoinByLinkView(LoginRequiredMixin, View):
     def get(self, request, token):
         trip = get_object_or_404(Trip, invite_token=token)
