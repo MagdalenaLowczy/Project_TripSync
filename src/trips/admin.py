@@ -4,7 +4,7 @@ from .models import Trip, TripMember, TripInvite
 
 @admin.register(Trip)
 class TripAdmin(admin.ModelAdmin):
-    list_display = ("id",)
+    list_display = ("id", "title", "destination", "start_date", "owner", "invite_token")
 
 
 @admin.register(TripMember)

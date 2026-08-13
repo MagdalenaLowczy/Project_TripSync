@@ -11,6 +11,7 @@ from .trip_invite_cancel import TripInviteCancelView
 from .trip_member_list import TripMemberListView
 from .trip_member_leave import TripMemberLeaveView
 from .trip_member_remove import TripMemberRemoveView
+from .join_by_link import TripJoinByLinkView
 
 __all__ = [
     "TripListView",
@@ -26,4 +27,5 @@ __all__ = [
     "TripMemberListView",
     "TripMemberLeaveView",
     "TripMemberRemoveView",
+    "TripJoinByLinkView",
 ]

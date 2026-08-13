@@ -1,32 +1,28 @@
 from pathlib import Path
 import environ
 import os
-import django.core.mail.utils
+
 
 env = environ.Env(DEBUG=(bool, False))
 
-
 os.environ["HOSTNAME"] = "localhost"
 
-django.core.mail.utils.DNS_NAME._fqdn = "localhost"
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-
+ALLOWED_HOSTS = [
+    "my-django-env.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
+    "localhost",
+    "127.0.0.1",
+    "my-new-environment.eba-n4q4tc6j.eu-central-1.elasticbeanstalk.com",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -49,6 +45,7 @@ INSTALLED_EXTENSIONS = [
     "crispy_forms",
     "crispy_bootstrap4",
     "silk",
+    "storages",
 ]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
@@ -93,11 +90,13 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "tripsync_db",
-        "USER": "tripsync_user",
-        "PASSWORD": "TajneHaslo456#@!",
-        "HOST": "db",  # localhost zeby lokalnie a db jesli dla konterera
-        "PORT": "5432",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env(
+            "DB_HOST"
+        ),  # "HOST": "db",  # localhost zeby lokalnie a db jesli dla konterera
+        "PORT": env("DB_PORT"),
     }
 }
 
@@ -157,7 +156,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "profile"
+LOGIN_REDIRECT_URL = "/users/profile/"
 LOGOUT_REDIRECT_URL = "home"
 
 
@@ -168,7 +167,6 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "noreply@tripsync.com"
 SERVER_EMAIL = "noreply@tripsync.com"
 
-import os
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get(
