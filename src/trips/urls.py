@@ -13,6 +13,7 @@ from .views import (
     TripInviteRespondView,
     TripMemberLeaveView,
     TripMemberRemoveView,
+    TripJoinByLinkView,
 )
 
 urlpatterns = [
@@ -26,6 +27,7 @@ urlpatterns = [
         TripInviteCreateView.as_view(),
         name="trip-invite-create",
     ),
+    path("join/<uuid:token>/", TripJoinByLinkView.as_view(), name="trip-join-by-link"),
     path(
         "<int:trip_id>/members/", TripMemberListView.as_view(), name="trip-member-list"
     ),
@@ -45,6 +47,6 @@ urlpatterns = [
         name="trip-invite-cancel",
     ),
     path(
-        "invites/<int:pk>", TripInviteRespondView.as_view(), name="trip-invite-respond"
+        "invites/<int:pk>/", TripInviteRespondView.as_view(), name="trip-invite-respond"
     ),
 ]

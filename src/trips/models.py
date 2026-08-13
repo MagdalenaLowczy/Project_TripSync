@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from notifications.models import Notification
 from logs.utils import log_action
+import uuid
 
 User = get_user_model()
 
@@ -17,6 +18,7 @@ class Trip(models.Model):
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="owned_trips"
     )
+    invite_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     def validate_dates(self):
         if self.start_date and self.end_date:

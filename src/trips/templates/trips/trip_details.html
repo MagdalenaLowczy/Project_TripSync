@@ -33,7 +33,11 @@
 
                         <!-- Trip buttons -->
                         <div class="d-flex gap-2">
+
                             {% if trip.owner == user %}
+                            <button onclick="copyInviteLink()" class="btn btn-sm btn-outline-success" id="copyBtn">
+        <i class="fas fa-link"></i> Copy Invite Link
+    </button>
                                 <a href="{% url 'trip-update' trip.pk %}" class="btn btn-sm" style="background-color: rgba(63,106,71,0.74); color: white; font-weight: bold;">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
@@ -230,5 +234,20 @@
     <a href="{% url 'trip-list' %}" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left"></i> Back to Trips
     </a>
+
+    <script>
+function copyInviteLink() {
+    const link = "{{ request.scheme }}://{{ request.get_host }}{% url 'trip-join-by-link' trip.invite_token %}";
+
+    navigator.clipboard.writeText(link).then(function() {
+        const btn = document.getElementById("copyBtn");
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(function() {
+            btn.innerHTML = original;
+        }, 2000);
+    });
+}
+</script>
 </div>
 {% endblock %}
